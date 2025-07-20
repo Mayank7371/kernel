@@ -1,38 +1,30 @@
-org 100h          ; Set code starting point at memory offset 100h (COM program standard)
+org 100h          ; Start at offset 100h (standard for COM programs)
 
-jmp main          ; Jump to main (skip data section for now)
+jmp main          ; Jump to main program
 
-; -------------------------------
-; DATA SECTION
-; -------------------------------
-message: db 'Hello World!', 0  ; Define string with null terminator
+message: db 'Hello World!', 0   ; Message string with null terminator
 
-; -------------------------------
-; PROCEDURE TO PRINT STRING
-; -------------------------------
-print_char:
-    mov si, message     ; Load address of message into SI
-    mov ah, 0Eh         ; BIOS teletype print function
+; --------------------------
+; Subroutine to print string
+; --------------------------
+print:
+    mov ah, 0Eh          ; Set teletype video function
 
 ._loop:
-    lodsb               ; Load byte from [SI] into AL, increment SI
-    cmp al, 0           ; Check if it's null terminator
-    je .done            ; If yes, jump to done
-
-    int 10h             ; BIOS interrupt to print char in AL
-    jmp ._loop          ; Repeat for next char
+    lodsb                ; Load byte from SI into AL, then increment SI
+    cmp al, 0            ; Check for null terminator
+    je .done             ; If 0, jump to done
+    int 10h              ; BIOS interrupt to print character
+    jmp ._loop           ; Repeat for next character
 
 .done:
-    ret                 ; Return from procedure
+    ret                  ; Return to caller
 
-; -------------------------------
-; MAIN PROGRAM
-; -------------------------------
+; --------------------------
+; Main Program
+; --------------------------
 main:
-    call print_char     ; Call the string print routine
+    mov si, message      ; Point SI to start of message
+    call print           ; Call print routine
 
-    mov ah, 0Eh         ; Prepare to print one more char
-    mov al, 'A'         ; Load 'A' into AL
-    int 10h             ; Print it
-
-    ret                 ; Exit program
+ret                      ; End program
