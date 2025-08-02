@@ -24,8 +24,6 @@ This project is handcrafted in low-level languages (Assembly + C), bootstrapped 
 ### 🧱 Build Steps
 
 ```bash
-nasm -f bin bootloader.asm -o bootloader.bin
-gcc -ffreestanding -c kernel.c -o kernel.o
-ld -T linker.ld -o kernel.bin kernel.o
-cat bootloader.bin kernel.bin > os-image.bin
-qemu-system-x86_64 -drive format=raw,file=os-image.bin
+nasm -f bin ./bootloader.asm -o ./bootloader.bin
+qemu-system-x86_64 -hda ./boot.bin
+
