@@ -2,12 +2,27 @@ ORG 0x7c00
 BITS 16
  
 start:
-    mov ah, 0eh  ;bios routine for video output
-    mov al, 'A'  ; for printing A
-    mov bx, 0
-    int 0x10  ; software interrupt
-
+    mov si, message
+    call print
     jmp $
+print:
+    mov bx,0
+.loop:
+    lodsb
+    cmp al,0
+    je .done
+    call print_char
+    jmp .loop
+.done:
+    ret
+print_char: 
+    mov ah, 0eh
+    int 0x10
+    ret
 
-    times 510-($-$$) db 0 ; fills the code with 0 so that total size is 512 bytes since we are making a bootloader
-    dw 0xAA55
+message: db 'HELLO WORLD', 0
+
+times 510-($-$$) db 0 
+dw 0xAA55
+
+
